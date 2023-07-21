@@ -1,14 +1,12 @@
 package com.yonlog.request;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
-@Setter
 @Getter
 @ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostCreate {
 
     @NotBlank(message = "제목을 입력해주세요.")
@@ -16,4 +14,10 @@ public class PostCreate {
 
     @NotBlank(message = "내용을 입력해주세요.")
     private String content;
+
+    @Builder
+    private PostCreate(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }
