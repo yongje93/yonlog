@@ -1,7 +1,7 @@
 package com.yonlog.controller;
 
-import com.yonlog.domain.Post;
 import com.yonlog.request.PostCreate;
+import com.yonlog.response.PostResponse;
 import com.yonlog.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +22,7 @@ public class PostController {
     }
     
     @GetMapping("/posts/{postId}")
-    public Post get(@PathVariable(name = "postId") Long id) {
-        Post post = postService.get(id);
-        return post;
+    public PostResponse get(@PathVariable(name = "postId") Long id) {
+        return postService.get(id);
     }
 }

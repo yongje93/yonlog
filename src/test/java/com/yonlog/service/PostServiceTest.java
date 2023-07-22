@@ -3,14 +3,14 @@ package com.yonlog.service;
 import com.yonlog.domain.Post;
 import com.yonlog.repository.PostRepository;
 import com.yonlog.request.PostCreate;
-import org.junit.jupiter.api.AfterEach;
+import com.yonlog.response.PostResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class PostServiceTest {
@@ -56,7 +56,7 @@ class PostServiceTest {
         postRepository.save(reqeustPost);
 
         // when
-        Post post = postService.get(reqeustPost.getId());
+        PostResponse post = postService.get(reqeustPost.getId());
 
         // then
         assertThat(post).isNotNull();
