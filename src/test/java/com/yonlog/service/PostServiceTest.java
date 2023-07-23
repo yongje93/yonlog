@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -49,19 +51,42 @@ class PostServiceTest {
     @Test
     void test2() {
         // given
-        Post reqeustPost = Post.builder()
+        Post req = Post.builder()
                 .title("foo")
                 .content("bar")
                 .build();
-        postRepository.save(reqeustPost);
+        postRepository.save(req);
 
         // when
-        PostResponse post = postService.get(reqeustPost.getId());
+        PostResponse post = postService.get(req.getId());
 
         // then
         assertThat(post).isNotNull();
         assertThat(post.getTitle()).isEqualTo("foo");
         assertThat(post.getContent()).isEqualTo("bar");
+    }
+
+    @DisplayName("글 여러개 조회")
+    @Test
+    void test3() {
+        // given
+        Post requestPost1 = Post.builder()
+                .title("foo1")
+                .content("bar1")
+                .build();
+
+        Post requestPost2 = Post.builder()
+                .title("foo2")
+                .content("bar2")
+                .build();
+
+        postRepository.saveAll(List.of(requestPost1, requestPost2));
+
+        // when
+        List<PostResponse> posts = postService.getList();
+
+        // then
+        assertThat(posts).hasSize(2);
     }
 
 }

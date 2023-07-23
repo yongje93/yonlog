@@ -1,5 +1,6 @@
 package com.yonlog.response;
 
+import com.yonlog.domain.Post;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,5 +19,13 @@ public class PostResponse {
         this.id = id;
         this.title = title.substring(0, Math.min(title.length(), 10));
         this.content = content;
+    }
+
+    public static PostResponse of(Post post) {
+        return PostResponse.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .build();
     }
 }
