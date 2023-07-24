@@ -9,10 +9,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @SpringBootTest
 class PostServiceTest {
@@ -66,27 +72,28 @@ class PostServiceTest {
         assertThat(post.getContent()).isEqualTo("bar");
     }
 
-    @DisplayName("글 여러개 조회")
+    @DisplayName("글 1페이지 조회")
     @Test
     void test3() {
         // given
-        Post requestPost1 = Post.builder()
-                .title("foo1")
-                .content("bar1")
-                .build();
+        List<Post> requestPosts = IntStream.range(0, 30)
+                .mapToObj(i -> Post.builder()
+                        .title("제목 " + i)
+                        .content("내용 " + i)
+                        .build()
+                ).collect(Collectors.toList());
 
-        Post requestPost2 = Post.builder()
-                .title("foo2")
-                .content("bar2")
-                .build();
+        postRepository.saveAll(requestPosts);
 
-        postRepository.saveAll(List.of(requestPost1, requestPost2));
+        Pageable pageable = PageRequest.of(0, 5, Sort.by(DESC, "id"));
 
         // when
-        List<PostResponse> posts = postService.getList();
+        List<PostResponse> posts = postService.getList(pageable);
 
         // then
-        assertThat(posts).hasSize(2);
+        assertThat(posts).hasSize(5);
+        assertThat(posts.get(0).getTitle()).isEqualTo("제목 29");
+        assertThat(posts.get(4).getTitle()).isEqualTo("제목 25");
     }
 
 }
