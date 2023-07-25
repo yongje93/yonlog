@@ -3,10 +3,10 @@ package com.yonlog.service;
 import com.yonlog.domain.Post;
 import com.yonlog.repository.PostRepository;
 import com.yonlog.request.PostCreate;
+import com.yonlog.request.PostSearch;
 import com.yonlog.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,8 +39,8 @@ public class PostService {
                 .build();
     }
 
-    public List<PostResponse> getList(Pageable pageable) {
-        return postRepository.findAll(pageable).stream()
+    public List<PostResponse> getList(PostSearch postSearch) {
+        return postRepository.getList(postSearch).stream()
                 .map(PostResponse::of)
                 .collect(Collectors.toList());
     }
