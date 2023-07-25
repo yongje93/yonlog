@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yonlog.domain.Post;
 import com.yonlog.repository.PostRepository;
 import com.yonlog.request.PostCreate;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -140,10 +140,10 @@ class PostControllerTest {
         postRepository.saveAll(requestPosts);
 
         // expected(when, then)
-        mockMvc.perform(get("/posts?page=1&sort=id,desc&size=5")
+        mockMvc.perform(get("/posts?page=1&size=10")
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", Matchers.is(5)))
+                .andExpect(jsonPath("$.length()", is(10)))
                 .andExpect(jsonPath("$[0].title").value("제목 29"))
                 .andExpect(jsonPath("$[0].content").value("내용 29"))
                 .andDo(print());
