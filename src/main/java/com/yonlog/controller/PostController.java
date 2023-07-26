@@ -1,6 +1,7 @@
 package com.yonlog.controller;
 
 import com.yonlog.request.PostCreate;
+import com.yonlog.request.PostEdit;
 import com.yonlog.request.PostSearch;
 import com.yonlog.response.PostResponse;
 import com.yonlog.service.PostService;
@@ -31,5 +32,10 @@ public class PostController {
     @GetMapping("/posts")
     public List<PostResponse> getList(@ModelAttribute PostSearch postSearch) {
         return postService.getList(postSearch);
+    }
+
+    @PatchMapping("/posts/{postId}")
+    public PostResponse edit(@PathVariable Long postId, @RequestBody @Valid PostEdit request) {
+        return postService.edit(postId, request);
     }
 }

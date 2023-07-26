@@ -3,6 +3,7 @@ package com.yonlog.service;
 import com.yonlog.domain.Post;
 import com.yonlog.repository.PostRepository;
 import com.yonlog.request.PostCreate;
+import com.yonlog.request.PostEdit;
 import com.yonlog.request.PostSearch;
 import com.yonlog.response.PostResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -92,6 +93,60 @@ class PostServiceTest {
         // then
         assertThat(posts.size()).isEqualTo(10L);
         assertThat(posts.get(0).getTitle()).isEqualTo("foo19");
+    }
+
+    @DisplayName("글 제목 수정")
+    @Test
+    void test4() {
+        // given
+        Post post = Post.builder()
+                .title("제목 테스트")
+                .content("내용 테스트")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("제목 수정")
+                .content("내용 테스트")
+                .build();
+
+        // when
+        postService.edit(post.getId(), postEdit);
+
+        // then
+        Post changePost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id = " + post.getId()));
+
+        assertThat(changePost.getTitle()).isEqualTo("제목 수정");
+        assertThat(changePost.getContent()).isEqualTo("내용 테스트");
+    }
+
+    @DisplayName("글 내용 수정")
+    @Test
+    void test5() {
+        // given
+        Post post = Post.builder()
+                .title("제목 테스트")
+                .content("내용 테스트")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("제목 테스트")
+                .content("내용 수정")
+                .build();
+
+        // when
+        postService.edit(post.getId(), postEdit);
+
+        // then
+        Post changePost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id = " + post.getId()));
+
+        assertThat(changePost.getTitle()).isEqualTo("제목 테스트");
+        assertThat(changePost.getContent()).isEqualTo("내용 수정");
     }
 
 }
