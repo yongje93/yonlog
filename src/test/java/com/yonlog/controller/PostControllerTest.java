@@ -151,7 +151,7 @@ class PostControllerTest {
 
     @DisplayName("글 내용 수정")
     @Test
-    void edit() throws Exception {
+    void editTest() throws Exception {
         // given
         Post post = Post.builder()
                 .title("제목 테스트")
@@ -171,6 +171,23 @@ class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("제목 테스트"))
                 .andExpect(jsonPath("$.content").value("내용 수정"))
+                .andDo(print());
+    }
+
+    @DisplayName("글 삭제")
+    @Test
+    void deleteTest() throws Exception {
+        // given
+        Post post = Post.builder()
+                .title("제목 테스트")
+                .content("내용 테스트")
+                .build();
+        postRepository.save(post);
+
+        // expected(when, then)
+        mockMvc.perform(delete("/posts/{postId}", post.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 
