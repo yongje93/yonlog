@@ -1,6 +1,7 @@
 package com.yonlog.service;
 
 import com.yonlog.domain.Post;
+import com.yonlog.exception.PostNotFound;
 import com.yonlog.repository.PostRepository;
 import com.yonlog.request.PostCreate;
 import com.yonlog.request.PostEdit;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 class PostServiceTest {
@@ -165,6 +167,62 @@ class PostServiceTest {
 
         // then
         assertThat(postRepository.count()).isZero();
+    }
+
+    @DisplayName("글 1개 조회 - 존재하지 않는 글")
+    @Test
+    void test7() {
+        // given
+        Post post = Post.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+
+        postRepository.save(post);
+
+        // expected
+        assertThatThrownBy(() -> postService.get(post.getId() + 1))
+                .isInstanceOf(PostNotFound.class)
+                .hasMessageContaining("존재하지 않는 글입니다.");
+    }
+
+    @DisplayName("게시글 삭제 - 존재하지 않는 글")
+    @Test
+    void test8() {
+        // given
+        Post post = Post.builder()
+                .title("제목 테스트")
+                .content("내용 테스트")
+                .build();
+
+        postRepository.save(post);
+
+        // expected
+        assertThatThrownBy(() -> postService.delete(post.getId() + 1))
+                .isInstanceOf(PostNotFound.class)
+                .hasMessageContaining("존재하지 않는 글입니다.");
+    }
+
+    @DisplayName("글 내용 수정 - 존재하지 않는 글")
+    @Test
+    void test9() {
+        // given
+        Post post = Post.builder()
+                .title("제목 테스트")
+                .content("내용 테스트")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title(null)
+                .content("내용 수정")
+                .build();
+
+        // expected
+        assertThatThrownBy(() -> postService.edit(post.getId() + 1, postEdit))
+                .isInstanceOf(PostNotFound.class)
+                .hasMessageContaining("존재하지 않는 글입니다.");
     }
 
 }
