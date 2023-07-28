@@ -83,7 +83,7 @@ class PostControllerTest {
 
     @DisplayName("/posts 요청시 DB에 값이 저장된다.")
     @Test
-    void write() throws Exception {
+    void writeTest() throws Exception {
         // given
         PostCreate request = PostCreate.builder()
                 .title("글 제목입니다.")
@@ -108,7 +108,7 @@ class PostControllerTest {
 
     @DisplayName("글 1개 조회")
     @Test
-    void test4() throws Exception {
+    void getTest() throws Exception {
         // given
         Post post = Post.builder()
                 .title("foo")
@@ -128,7 +128,7 @@ class PostControllerTest {
 
     @DisplayName("글 1페이지 조회")
     @Test
-    void test5() throws Exception {
+    void getListTest() throws Exception {
         // given
         List<Post> requestPosts = IntStream.range(0, 30)
                 .mapToObj(i -> Post.builder()
@@ -188,6 +188,51 @@ class PostControllerTest {
         mockMvc.perform(delete("/posts/{postId}", post.getId())
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @DisplayName("존재하지 않는 게시글 조회")
+    @Test
+    void getNotExistPostTest() throws Exception {
+        // expected
+        mockMvc.perform(get("/posts/{postId}", 1L)
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @DisplayName("존재하지 않는 게시글 수정")
+    @Test
+    void editNotExistPostTest() throws Exception {
+        // given
+        PostEdit postEdit = PostEdit.builder()
+                .title("제목 테스트")
+                .content("내용 수정")
+                .build();
+
+        // expected
+        mockMvc.perform(patch("/posts/{postId}", 1L)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(postEdit)))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @DisplayName("게시글 작성 시 제목에 '바보'는 포함될 수 없다.")
+    @Test
+    void noWriteInvalidRequestTest() throws Exception {
+        // given
+        PostCreate request = PostCreate.builder()
+                .title("나는 바보입니다.")
+                .content("내용입니다.")
+                .build();
+
+        // when
+        mockMvc.perform(post("/posts")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 
