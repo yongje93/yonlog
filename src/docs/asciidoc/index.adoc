@@ -1,0 +1,17 @@
+= 용로그 API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 1
+:sectlinks:
+
+== 글 단건 조회
+
+=== 요청
+
+include::{snippets}/index/http-request.adoc[]
+
+=== 응답
+
+include::{snippets}/index/http-response.adoc[]
