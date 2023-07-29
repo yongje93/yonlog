@@ -22,6 +22,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -84,18 +85,19 @@ public class PostControllerDocTest {
 
         // excepted
         this.mockMvc.perform(RestDocumentationRequestBuilders.post("/posts")
-                        .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
-                )
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(document("post-create",
                         preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("title").type(JsonFieldType.STRING)
+                                        .attributes(key("constraint").value("좋은 제목 입력해 주세요."))
                                         .description("제목"),
                                 fieldWithPath("content").type(JsonFieldType.STRING)
+                                        .optional()
                                         .description("내용")
                         )
                 ));
