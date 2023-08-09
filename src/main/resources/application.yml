@@ -11,7 +11,13 @@ spring:
         default-page-size: 5
 
   datasource:
-    url: jdbc:h2:mem:~/yonlog
+    url: jdbc:h2:mem:yonlog;NON_KEYWORDS=USER
     driver-class-name: org.h2.Driver
     username: sa
     password:
+
+  jpa:
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
