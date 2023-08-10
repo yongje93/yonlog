@@ -22,7 +22,8 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -42,26 +43,7 @@ class PostControllerTest {
         postRepository.deleteAll();
     }
 
-    @DisplayName("/posts 요청시 Hello World를 출력한다.")
-    @Test
-    void test() throws Exception {
-        // given
-        PostCreate request = PostCreate.builder()
-                .title("제목입니다.")
-                .content("내용입니다.")
-                .build();
-
-        // expected
-        mockMvc.perform(post("/posts")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request))
-                )
-                .andExpect(status().isOk())
-                .andExpect(content().string(""))
-                .andDo(print());
-    }
-
-    @DisplayName("/posts 요청시 title 값은 필수다.")
+    @DisplayName("글 작성 요청시 title 값은 필수다.")
     @Test
     void test2() throws Exception {
         // given
@@ -81,7 +63,7 @@ class PostControllerTest {
                 .andDo(print());
     }
 
-    @DisplayName("/posts 요청시 DB에 값이 저장된다.")
+    @DisplayName("글 작성 요청시 DB에 값이 저장된다.")
     @Test
     void writeTest() throws Exception {
         // given
