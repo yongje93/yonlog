@@ -21,3 +21,6 @@ spring:
   sql:
     init:
       mode: always
+
+yonlog:
+  jwt-key: "EAQlPZDkEYeaN50gAoALQPxHBDFEl9ZCxncNNNcnncc="
