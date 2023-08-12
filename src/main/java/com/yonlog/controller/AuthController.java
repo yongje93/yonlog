@@ -2,6 +2,7 @@ package com.yonlog.controller;
 
 import com.yonlog.config.AppConfig;
 import com.yonlog.request.Login;
+import com.yonlog.request.Signup;
 import com.yonlog.response.SessionResponse;
 import com.yonlog.service.AuthService;
 import io.jsonwebtoken.Jwts;
@@ -37,5 +38,10 @@ public class AuthController {
                 .compact();
 
         return new SessionResponse(jws);
+    }
+
+    @PostMapping("/auth/signup")
+    public void signup(@RequestBody Signup signup) {
+        authService.signup(signup);
     }
 }
