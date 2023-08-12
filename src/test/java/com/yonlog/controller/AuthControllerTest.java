@@ -6,6 +6,7 @@ import com.yonlog.domain.User;
 import com.yonlog.repository.SessionRepository;
 import com.yonlog.repository.UserRepository;
 import com.yonlog.request.Login;
+import com.yonlog.request.Signup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -159,6 +160,24 @@ class AuthControllerTest {
                         .header("Authorization", session.getAccessToken() + "-other")
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+
+    @DisplayName("회원가입")
+    @Test
+    void signupTest() throws Exception {
+        // given
+        Signup signup = Signup.builder()
+                .email("yongje@gmail.com")
+                .password("1234")
+                .name("용제")
+                .build();
+
+        // excepted
+        mockMvc.perform(post("/auth/signup")
+                        .content(objectMapper.writeValueAsString(signup))
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 }
