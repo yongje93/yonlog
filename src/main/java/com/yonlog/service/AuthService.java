@@ -1,6 +1,6 @@
 package com.yonlog.service;
 
-import com.yonlog.domain.Session;
+import com.yonlog.crypto.PasswordEncoder;
 import com.yonlog.domain.User;
 import com.yonlog.exception.AlreadyExistsEmailException;
 import com.yonlog.exception.InvalidSigninInformation;
@@ -8,7 +8,6 @@ import com.yonlog.repository.UserRepository;
 import com.yonlog.request.Login;
 import com.yonlog.request.Signup;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,12 +18,17 @@ import java.util.Optional;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public Long signin(Login login) {
-        User user = userRepository.findByEmailAndPassword(login.getEmail(), login.getPassword())
+        User user = userRepository.findByEmail(login.getEmail())
                 .orElseThrow(InvalidSigninInformation::new);
-        Session session = user.addSession();
+
+        boolean matches = passwordEncoder.matches(login.getPassword(), user.getPassword());
+        if (!matches) {
+            throw new InvalidSigninInformation();
+        }
 
         return user.getId();
     }
@@ -35,14 +39,7 @@ public class AuthService {
             throw new AlreadyExistsEmailException();
         }
 
-        SCryptPasswordEncoder passwordEncoder = new SCryptPasswordEncoder(
-                16,
-                8,
-                1,
-                32,
-                64);
-
-        String encryptedPassword = passwordEncoder.encode(signup.getPassword());
+        String encryptedPassword = passwordEncoder.encrypt(signup.getPassword());
 
         User user = User.builder()
                 .email(signup.getEmail())
