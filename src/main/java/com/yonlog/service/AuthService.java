@@ -8,6 +8,7 @@ import com.yonlog.repository.UserRepository;
 import com.yonlog.request.Login;
 import com.yonlog.request.Signup;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,9 +35,18 @@ public class AuthService {
             throw new AlreadyExistsEmailException();
         }
 
+        SCryptPasswordEncoder passwordEncoder = new SCryptPasswordEncoder(
+                16,
+                8,
+                1,
+                32,
+                64);
+
+        String encryptedPassword = passwordEncoder.encode(signup.getPassword());
+
         User user = User.builder()
                 .email(signup.getEmail())
-                .password(signup.getPassword())
+                .password(encryptedPassword)
                 .name(signup.getName())
                 .build();
 
