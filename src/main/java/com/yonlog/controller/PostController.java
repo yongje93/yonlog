@@ -1,6 +1,5 @@
 package com.yonlog.controller;
 
-import com.yonlog.config.data.UserSession;
 import com.yonlog.request.PostCreate;
 import com.yonlog.request.PostEdit;
 import com.yonlog.request.PostSearch;
@@ -19,17 +18,6 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
-
-    @GetMapping("/foo")
-    public Long foo(UserSession userSession) {
-        log.info(">> {}", userSession.id);
-        return userSession.id;
-    }
-
-    @GetMapping("/bar")
-    public String bar(UserSession userSession) {
-        return "인증이 필요한 페이지";
-    }
 
     @PostMapping("/posts")
     public void post(@RequestBody @Valid PostCreate request) {
