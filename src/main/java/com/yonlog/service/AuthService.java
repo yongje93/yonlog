@@ -1,11 +1,11 @@
 package com.yonlog.service;
 
-import com.yonlog.crypto.PasswordEncoder;
 import com.yonlog.domain.User;
 import com.yonlog.exception.AlreadyExistsEmailException;
 import com.yonlog.repository.UserRepository;
 import com.yonlog.request.Signup;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -23,7 +23,7 @@ public class AuthService {
             throw new AlreadyExistsEmailException();
         }
 
-        String encryptedPassword = passwordEncoder.encrypt(signup.getPassword());
+        String encryptedPassword = passwordEncoder.encode(signup.getPassword());
 
         User user = User.builder()
                 .email(signup.getEmail())
