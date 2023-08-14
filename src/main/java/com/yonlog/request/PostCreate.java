@@ -1,9 +1,8 @@
 package com.yonlog.request;
 
 import com.yonlog.exception.InvalidRequest;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-
-import javax.validation.constraints.NotBlank;
 
 @Getter
 @ToString

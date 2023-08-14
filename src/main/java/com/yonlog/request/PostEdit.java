@@ -1,10 +1,9 @@
 package com.yonlog.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-
-import javax.validation.constraints.NotBlank;
 
 @Getter
 @ToString

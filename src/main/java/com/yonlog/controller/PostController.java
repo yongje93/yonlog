@@ -5,11 +5,11 @@ import com.yonlog.request.PostEdit;
 import com.yonlog.request.PostSearch;
 import com.yonlog.response.PostResponse;
 import com.yonlog.service.PostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
