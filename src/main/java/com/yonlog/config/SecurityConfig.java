@@ -1,7 +1,13 @@
 package com.yonlog.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yonlog.config.handler.Http401Handler;
+import com.yonlog.config.handler.Http403Handler;
+import com.yonlog.config.handler.LoginFailHandler;
 import com.yonlog.domain.User;
 import com.yonlog.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,9 +24,13 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity(debug = true)
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final ObjectMapper objectMapper;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -45,10 +55,15 @@ public class SecurityConfig {
                                 .passwordParameter("password")
                                 .loginPage("/auth/login")
                                 .loginProcessingUrl("/auth/login")
-                                .defaultSuccessUrl("/"))
+                                .defaultSuccessUrl("/")
+                                .failureHandler(new LoginFailHandler(objectMapper)))
                 .rememberMe(rm -> rm.rememberMeParameter("remember")
                         .alwaysRemember(false)
                         .tokenValiditySeconds(2592000))
+                .exceptionHandling(e -> {
+                    e.accessDeniedHandler(new Http403Handler(objectMapper));
+                    e.authenticationEntryPoint(new Http401Handler(objectMapper));
+                })
                 .build();
     }
 
