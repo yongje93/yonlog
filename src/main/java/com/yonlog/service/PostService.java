@@ -2,8 +2,11 @@ package com.yonlog.service;
 
 import com.yonlog.domain.Post;
 import com.yonlog.domain.PostEditor;
+import com.yonlog.domain.User;
 import com.yonlog.exception.PostNotFound;
+import com.yonlog.exception.UserNotFound;
 import com.yonlog.repository.PostRepository;
+import com.yonlog.repository.UserRepository;
 import com.yonlog.request.PostCreate;
 import com.yonlog.request.PostEdit;
 import com.yonlog.request.PostSearch;
@@ -21,12 +24,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostService {
 
+    private final UserRepository userRepository;
     private final PostRepository postRepository;
 
-    public void write(PostCreate postCreate) {
+    public void write(Long userId, PostCreate postCreate) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserNotFound::new);
+
         Post post = Post.builder()
                 .title(postCreate.getTitle())
                 .content(postCreate.getContent())
+                .user(user)
                 .build();
 
         postRepository.save(post);

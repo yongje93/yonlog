@@ -21,10 +21,15 @@ public class Post {
     @Lob
     private String content;
 
+    @ManyToOne
+    @JoinColumn
+    private User user;
+
     @Builder
-    private Post(String title, String content) {
+    private Post(String title, String content, User user) {
         this.title = title;
         this.content = content;
+        this.user = user;
     }
 
     public PostEditor.PostEditorBuilder toEditor() {
@@ -36,5 +41,9 @@ public class Post {
     public void edit(PostEditor postEditor) {
         title = postEditor.getTitle();
         content = postEditor.getContent();
+    }
+
+    public Long getUserId() {
+        return this.user.getId();
     }
 }
