@@ -13,8 +13,7 @@ public class UserPrincipal extends User {
 
     public UserPrincipal(com.yonlog.domain.User user) {
         super(user.getEmail(), user.getPassword(), List.of(
-                new SimpleGrantedAuthority("ROLE_ADMIN"),
-                new SimpleGrantedAuthority("WRITE")
+                new SimpleGrantedAuthority("ROLE_ADMIN")
         ));
         this.userId = user.getId();
     }
