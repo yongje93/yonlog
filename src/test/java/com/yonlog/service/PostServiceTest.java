@@ -1,8 +1,10 @@
 package com.yonlog.service;
 
 import com.yonlog.domain.Post;
+import com.yonlog.domain.User;
 import com.yonlog.exception.PostNotFound;
 import com.yonlog.repository.PostRepository;
+import com.yonlog.repository.UserRepository;
 import com.yonlog.request.PostCreate;
 import com.yonlog.request.PostEdit;
 import com.yonlog.request.PostSearch;
@@ -29,22 +31,33 @@ class PostServiceTest {
     @Autowired
     PostRepository postRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     @BeforeEach
     void clean() {
         postRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @DisplayName("글 작성")
     @Test
     void test1() {
         // given
+        User user = User.builder()
+                .name("용제")
+                .email("yongje@gmail.com")
+                .password("1234")
+                .build();
+        userRepository.save(user);
+
         PostCreate postCreate = PostCreate.builder()
                 .title("제목입니다.")
                 .content("내용입니다.")
                 .build();
 
         // when
-        postService.write(postCreate);
+        postService.write(user.getId(), postCreate);
 
         // then
         assertThat(postRepository.count()).isEqualTo(1);

@@ -1,17 +1,19 @@
 package com.yonlog.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yonlog.config.YonlogMockUser;
 import com.yonlog.domain.Post;
+import com.yonlog.domain.User;
 import com.yonlog.repository.PostRepository;
+import com.yonlog.repository.UserRepository;
 import com.yonlog.request.PostCreate;
 import com.yonlog.request.PostEdit;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -39,9 +41,13 @@ class PostControllerTest {
     @Autowired
     private PostRepository postRepository;
 
-    @BeforeEach
+    @Autowired
+    private UserRepository userRepository;
+
+    @AfterEach
     void clean() {
         postRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @DisplayName("글 작성 요청시 title 값은 필수다.")
@@ -65,7 +71,7 @@ class PostControllerTest {
     }
 
     @DisplayName("글 작성")
-    @WithMockUser(username = "yong@gmail.com", roles = {"ADMIN"})
+    @YonlogMockUser
     @Test
     void writeTest() throws Exception {
         // given
@@ -134,13 +140,16 @@ class PostControllerTest {
     }
 
     @DisplayName("글 내용 수정")
-    @WithMockUser(username = "yong@gmail.com", roles = {"ADMIN"})
+    @YonlogMockUser
     @Test
     void editTest() throws Exception {
         // given
+        User user = userRepository.findAll().get(0);
+
         Post post = Post.builder()
                 .title("제목 테스트")
                 .content("내용 테스트")
+                .user(user)
                 .build();
         postRepository.save(post);
 
@@ -160,13 +169,16 @@ class PostControllerTest {
     }
 
     @DisplayName("글 삭제")
-    @WithMockUser(username = "yong@gmail.com", roles = {"ADMIN"})
+    @YonlogMockUser
     @Test
     void deleteTest() throws Exception {
         // given
+        User user = userRepository.findAll().get(0);
+
         Post post = Post.builder()
                 .title("제목 테스트")
                 .content("내용 테스트")
+                .user(user)
                 .build();
         postRepository.save(post);
 
@@ -188,7 +200,7 @@ class PostControllerTest {
     }
 
     @DisplayName("존재하지 않는 게시글 수정")
-    @WithMockUser(username = "yong@gmail.com", roles = {"ADMIN"})
+    @YonlogMockUser
     @Test
     void editNotExistPostTest() throws Exception {
         // given
@@ -206,7 +218,7 @@ class PostControllerTest {
     }
 
     @DisplayName("게시글 작성 시 제목에 '바보'는 포함될 수 없다.")
-    @WithMockUser(username = "yong@gmail.com", roles = {"ADMIN"})
+    @YonlogMockUser
     @Test
     void noWriteInvalidRequestTest() throws Exception {
         // given

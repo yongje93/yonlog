@@ -1,9 +1,11 @@
 package com.yonlog.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yonlog.config.YonlogMockUser;
 import com.yonlog.domain.Post;
 import com.yonlog.repository.PostRepository;
 import com.yonlog.request.PostCreate;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -37,10 +38,15 @@ public class PostControllerDocTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private PostRepository postRepository;
+    private ObjectMapper objectMapper;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private PostRepository postRepository;
+
+    @AfterEach
+    void clean() {
+        postRepository.deleteAll();
+    }
 
     @DisplayName("글 단건 조회 테스트")
     @Test
@@ -54,7 +60,7 @@ public class PostControllerDocTest {
         postRepository.save(post);
 
         // excepted
-        this.mockMvc.perform(RestDocumentationRequestBuilders.get("/posts/{postId}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/posts/{postId}", 1L)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -76,7 +82,7 @@ public class PostControllerDocTest {
     }
 
     @DisplayName("글 등록")
-    @WithMockUser(username = "yong@gmail.com", roles = {"ADMIN"})
+    @YonlogMockUser
     @Test
     void writeTest() throws Exception {
         // given
@@ -86,7 +92,7 @@ public class PostControllerDocTest {
                 .build();
 
         // excepted
-        this.mockMvc.perform(RestDocumentationRequestBuilders.post("/posts")
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/posts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
