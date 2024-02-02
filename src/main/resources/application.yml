@@ -19,5 +19,10 @@ spring:
   jpa:
     defer-datasource-initialization: true
 
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+
 yonlog:
   jwt-key: "EAQlPZDkEYeaN50gAoALQPxHBDFEl9ZCxncNNNcnncc="
